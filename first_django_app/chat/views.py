@@ -17,12 +17,12 @@ def index(request):
     return render(request, 'chat/index.html', {'messages': chatMessages})  #hier brauch man template pfad nicht angeben weil der da immmer von alleine rein guckt 
 
 def login_view(request):
-    redirect = request.GET.get('next')
+    redirect = request.GET.get('next', '/chat/')
     if request.method == 'POST':
         user = authenticate(username= request.POST.get('username'), password=request.POST.get('password')) 
         if user:
             login(request, user)
-            return HttpResponseRedirect(request.POST.get('redirect'))
+            return HttpResponseRedirect(request.POST.get('next', '/chat/'))
         else:
             return render(request, 'auth/login.html', {'wrongPassword' : True , 'redirect': redirect})
     return render(request, 'auth/login.html',{'redirect': redirect})
