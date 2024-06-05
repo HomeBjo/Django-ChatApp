@@ -12,14 +12,15 @@
     {% endif %}
     
     <form method="post" action="/login/">
+        {% csrf_token %}
+        <input type="hidden" name="redirect" value="{{ redirect }}">
        <div> <input name="username" type="text"></div>    <!-- name = ""   istwie eine variable  -->
         <div> <input name="password" type="passwort"></div> 
 
 
 
 
-        {% csrf_token %}
-        {{ form.as_p }}
+      
         <button type="submit">Login</button>
     </form>
     
