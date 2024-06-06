@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Register</h1>
+{% if error %}
+<p style="color: red;">{{error}}</p>
+{% endif %}
+<form method="post" action="/register/" style="max-width: 500px;">
+{% csrf_token %}
+<div><input class="mdl-textfield__input" placeholder="username" name="username" type="text" required ></div>
+<div><input class="mdl-textfield__input" placeholder="password" name="password" type="text" required ></div>
+<div><input class="mdl-textfield__input" placeholder="password" name="password_confirm" type="text" required ></div>
+<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit"> Register </button> 
+</form>
+{% endblock %}

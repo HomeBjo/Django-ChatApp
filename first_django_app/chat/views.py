@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 from chat.models import Chat
@@ -26,3 +27,19 @@ def login_view(request):
         else:
             return render(request, 'auth/login.html', {'wrongPassword' : True , 'redirect': redirect})
     return render(request, 'auth/login.html',{'redirect': redirect})
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        if password == password_confirm:
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            user = authenticate(username= request.POST.get('username'), password=request.POST.get('password'))
+            if user:
+             login(request, user)
+            return HttpResponseRedirect(request.POST.get('next', '/chat/'))
+        else:
+            return render(request, 'auth/register.html', {'error': 'Passwords do not match'})
+    return render(request, 'auth/register.html')
