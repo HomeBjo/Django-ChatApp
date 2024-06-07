@@ -1,10 +1,17 @@
 {% extends "base.html" %} {% block content %} 
-{% if request.user.is_authenticated %} {% for message in messages %}
+{% if request.user.is_authenticated %} 
+
+<div id="messageContainer">
+{% for message in messages %}
+
 <div>
   <span class="color-gray">[{{ message.created_at }}]</span>
   {{message.author }} : <i>{{ message.text }}</i>
 </div>
+
 {% endfor %}
+</div>
+
 
 <script>
 
@@ -13,12 +20,32 @@
     let token = '{{ csrf_token }}';
     fd.append('textmessage', messageField.value);
     fd.append('csrfmiddlewaretoken', token);
+
+    let now = new Date();
+    let formattedDate = now.toLocaleString(); 
+
     try {
-      await fetch("/chat/", {
+      messageContainer.innerHTML  +=
+     `<div id="deleteMessage">
+        <span class="color-gray">[DATUM]</span>
+         {{request.user.author}} : <i class="color-gray" >${messageField.value}</i>
+      </div>`;
+      let RESPONSE = await fetch("/chat/", {
         method: "POST",
         body: fd,
       }); 
       console.log('Success!!')
+
+      document.getElementById('deleteMessage').remove();
+
+      let result = await RESPONSE.json();
+
+      messageContainer.innerHTML  +=
+      `<div>
+            <span class="color-gray">${result.created_at}</span>
+            ${result.author} : <i class="color-green">${result.text}</i>
+        </div>`;
+
     } catch (e) {
       console.error('An error occured', e)
     }
