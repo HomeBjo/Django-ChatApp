@@ -26,16 +26,30 @@ def index(request):
     chatMessages = Message.objects.filter(chat__id=1) # also hier gehen wir von message auf das objekt chat mit der id 1  was ein array ist    
     return render(request, 'chat/index.html', {'messages': chatMessages})  #hier brauch man template pfad nicht angeben weil der da immmer von alleine rein guckt 
 
+# def login_view(request):
+#     redirect = request.GET.get('next', '/chat/')
+#     if request.method == 'POST':
+#         user = authenticate(username= request.POST.get('username'), password=request.POST.get('password')) 
+#         if user:
+#             login(request, user)
+#             return HttpResponseRedirect(request.POST.get('redirect')) # ob jetzt so drin steht oder nur ('redirect') ist rigednwie das selbe
+#         else:
+#             return render(request, 'auth/login.html', {'wrongPassword' : True , 'redirect': redirect})
+#     return render(request, 'auth/login.html',{'redirect': redirect})
+# hier die funktion drüber ist der ursprung und mit einem http request den wir jetzt in der unteren funktion als json machen damit die seite nicht neu geladen wird
+
 def login_view(request):
     redirect = request.GET.get('next', '/chat/')
     if request.method == 'POST':
-        user = authenticate(username= request.POST.get('username'), password=request.POST.get('password')) 
+        user = authenticate(username=request.POST.get('username'), password=request.POST.get('password')) 
         if user:
             login(request, user)
-            return HttpResponseRedirect(request.POST.get('next', '/chat/'))
+            return JsonResponse({'success': True, 'redirect': redirect})
         else:
-            return render(request, 'auth/login.html', {'wrongPassword' : True , 'redirect': redirect})
-    return render(request, 'auth/login.html',{'redirect': redirect})
+            return JsonResponse({'success': False, 'error': 'Invalid credentials'})
+
+    return render(request, 'auth/login.html', {'redirect': redirect})
+
 
 def register_view(request):
     if request.method == 'POST':

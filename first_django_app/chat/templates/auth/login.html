@@ -1,25 +1,91 @@
 {% extends "base.html" %} {% block content %}
-    <h1>Login</h1>
-    {% if wrongPassword %}
-    <p>Wrong Login Data</p>
-    {% endif %}
-    
-    <form method="post" action="/login/" style="max-width: 500px;">
-        {% csrf_token %}
-        <input type="hidden" name="redirect" value="{{ redirect }}">
-       <div> <input  class="mdl-textfield__input" placeholder="username" name="username" type="text"></div>    <!-- name = ""   istwie eine variable  -->
-        <div> <input  class="mdl-textfield__input" placeholder="passwort" name="password" type="passwort"></div> 
 
+<!-- <h1>Login</h1>
+{% if wrongPassword %}
+<p>Wrong Login Data</p>
+{% endif %}
 
+<form method="post" action="/login/" style="max-width: 500px;">
+    {% csrf_token %}
+    <input type="hidden" name="redirect" value="{{ redirect }}">
+   <div> <input  class="mdl-textfield__input" placeholder="username" name="username" type="text"></div>     name = ""   istwie eine variable  -->
+<!-- <div> <input  class="mdl-textfield__input" placeholder="passwort" name="password" type="passwort"></div>
+ -->
 
+<!-- <button
+class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit"
+>
+Button
+</button>
+</form>
+ <p>Don't have an account? <a href="/register/">Register here</a></p>   #das ist hier der backend html aufbau -->
 
-      
-        <button
-    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit"
+<h1>Login</h1>
+
+<p id="err"></p>
+
+<script>
+  async function login() {
+    let fd = new FormData();
+    let token = "{{ csrf_token }}";
+    fd.append("username", id1.value);
+    fd.append("password", id2.value);
+    fd.append("csrfmiddlewaretoken", token);
+
+    try {
+      let RESPONSE = await fetch("/login/", {
+        method: "POST",
+        body: fd,
+      });
+      console.log("Success!!Login");
+      let result = await RESPONSE.json();
+      if (result.success) {
+        window.location.href = "/chat/";
+      } else {
+        document.getElementById("err").textContent = "Wrong Login Data";
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      document.getElementById("error-message").textContent =
+        "An error occurred. Please try again.";
+    }
+  }
+</script>
+
+<form
+  form
+  onsubmit="login(); return false;"
+  method="post"
+  style="max-width: 500px"
+>
+  {% csrf_token %}
+  <input type="hidden" name="redirect" value="{{ redirect }}" />
+  <div>
+    <input
+      class="mdl-textfield__input"
+      placeholder="username"
+      name="username"
+      id="id1"
+      type="text"
+    />
+  </div>
+  <!-- name = ""   istwie eine variable  -->
+  <div>
+    <input
+      class="mdl-textfield__input"
+      placeholder="passwort"
+      name="password"
+      id="id2"
+      type="passwort"
+    />
+  </div>
+
+  <button
+    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+    type="submit"
   >
     Button
   </button>
-    </form>
-    <p>Don't have an account? <a href="/register/">Register here</a></p>
-    {% endblock %}
-    
+</form>
+<p>Don't have an account? <a href="/register/">Register here</a></p>
+{% endblock %}
